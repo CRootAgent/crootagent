@@ -1,0 +1,163 @@
+name: Build, Test, and Release Multi-OS
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    name: Run Unit & Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Run Cargo Check
+        run: cargo check --verbose
+
+      - name: Run Test Suite
+        run: cargo test --verbose
+
+  build-and-release:
+    name: Build (${{ matrix.target }})
+    needs: [test]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            binary_name: crootagent
+            asset_name: crootagent-linux-x86_64.tar.gz
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            binary_name: crootagent
+            asset_name: crootagent-macos-arm64.tar.gz
+          - os: macos-13
+            target: x86_64-apple-darwin
+            binary_name: crootagent
+            asset_name: crootagent-macos-x86_64.tar.gz
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            binary_name: crootagent.exe
+            asset_name: crootagent-windows-x86_64.zip
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Build release binary
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Package binary (Unix)
+        if: matrix.os != 'windows-latest'
+        run: |
+          cd target/${{ matrix.target }}/release
+          tar -czf ../../../${{ matrix.asset_name }} ${{ matrix.binary_name }}
+          cd ../../..
+          shasum -a 256 ${{ matrix.asset_name }} > ${{ matrix.asset_name }}.sha256
+
+      - name: Package binary (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          cd target/${{ matrix.target }}/release
+          Compress-Archive -Path ${{ matrix.binary_name }} -DestinationPath ../../../${{ matrix.asset_name }}
+          cd ../../..
+          Get-FileHash -Path ${{ matrix.asset_name }} -Algorithm SHA256 | Format-List | Out-File -FilePath "${{ matrix.asset_name }}.sha256"
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset_name }}
+          path: |
+            ${{ matrix.asset_name }}
+            ${{ matrix.asset_name }}.sha256
+
+  create-github-release:
+    name: Auto Tag and Create GitHub Release
+    needs: [build-and-release]
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: Prepare Release Assets
+        run: |
+          mkdir -p release-assets
+          find dist -type f \( -name "*.tar.gz" -o -name "*.zip" -o -name "*.sha256" \) -exec cp {} release-assets/ \;
+          ls -la release-assets
+
+      - name: Determine Tag
+        id: tagger
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            TAG_NAME="${GITHUB_REF#refs/tags/}"
+          else
+            VERSION=$(grep '^version' Cargo.toml | head -n1 | cut -d '"' -f2)
+            TAG_NAME="v${VERSION}"
+            # Check if tag already exists, append run number if needed
+            if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+              TAG_NAME="v${VERSION}.${{ github.run_number }}"
+            fi
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git tag -a "$TAG_NAME" -m "Automated Release $TAG_NAME"
+            git push origin "$TAG_NAME" || true
+          fi
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tagger.outputs.tag_name }}
+          name: "CRootAgent Release ${{ steps.tagger.outputs.tag_name }}"
+          body: |
+            ## 🚀 CRootAgent Release ${{ steps.tagger.outputs.tag_name }}
+            
+            Ultra-lightweight CLI coding assistant with multi-API session management built in Rust.
+            
+            ### 📦 Binaries
+            - **Linux (x86_64):** `crootagent-linux-x86_64.tar.gz`
+            - **macOS Apple Silicon (arm64):** `crootagent-macos-arm64.tar.gz`
+            - **macOS Intel (x86_64):** `crootagent-macos-x86_64.tar.gz`
+            - **Windows (x86_64):** `crootagent-windows-x86_64.zip`
+            
+            ### ⚡ Quick Install
+            ```bash
+            # macOS / Linux
+            curl -fsSL https://crootagent.github.io/install.sh | bash
+            
+            # Windows PowerShell
+            irm https://crootagent.github.io/install.ps1 | iex
+            ```
+          files: release-assets/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
