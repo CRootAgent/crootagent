@@ -41,20 +41,20 @@ jobs:
         include:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            binary_name: crootagent
-            asset_name: crootagent-linux-x86_64.tar.gz
+            binary_name: lontar
+            asset_name: lontar-linux-x86_64.tar.gz
           - os: macos-latest
             target: aarch64-apple-darwin
-            binary_name: crootagent
-            asset_name: crootagent-macos-arm64.tar.gz
+            binary_name: lontar
+            asset_name: lontar-macos-arm64.tar.gz
           - os: macos-latest
             target: x86_64-apple-darwin
-            binary_name: crootagent
-            asset_name: crootagent-macos-x86_64.tar.gz
+            binary_name: lontar
+            asset_name: lontar-macos-x86_64.tar.gz
           - os: windows-latest
             target: x86_64-pc-windows-msvc
-            binary_name: crootagent.exe
-            asset_name: crootagent-windows-x86_64.zip
+            binary_name: lontar.exe
+            asset_name: lontar-windows-x86_64.zip
 
     steps:
       - name: Checkout repository
@@ -123,7 +123,6 @@ jobs:
           else
             VERSION=$(grep '^version' Cargo.toml | head -n1 | cut -d '"' -f2)
             TAG_NAME="v${VERSION}"
-            # Check if tag already exists, append run number if needed
             if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
               TAG_NAME="v${VERSION}.${{ github.run_number }}"
             fi
@@ -138,25 +137,25 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tagger.outputs.tag_name }}
-          name: "CRootAgent Release ${{ steps.tagger.outputs.tag_name }}"
+          name: "Lontar CLI Release ${{ steps.tagger.outputs.tag_name }}"
           body: |
-            ## 🚀 CRootAgent Release ${{ steps.tagger.outputs.tag_name }}
+            ## 🌴 LONTAR CLI Release ${{ steps.tagger.outputs.tag_name }}
             
-            Ultra-lightweight CLI coding assistant with multi-API session management built in Rust.
+            Ultra-lightweight CLI AI Agent with NotebookLM document integration, universal free LLM routing, and OpenCode-inspired terminal UX.
             
-            ### 📦 Binaries
-            - **Linux (x86_64):** `crootagent-linux-x86_64.tar.gz`
-            - **macOS Apple Silicon (arm64):** `crootagent-macos-arm64.tar.gz`
-            - **macOS Intel (x86_64):** `crootagent-macos-x86_64.tar.gz`
-            - **Windows (x86_64):** `crootagent-windows-x86_64.zip`
+            ### 📦 Multi-OS Binaries
+            - **Linux (x86_64):** `lontar-linux-x86_64.tar.gz`
+            - **macOS Apple Silicon (arm64):** `lontar-macos-arm64.tar.gz`
+            - **macOS Intel (x86_64):** `lontar-macos-x86_64.tar.gz`
+            - **Windows (x86_64):** `lontar-windows-x86_64.zip`
             
-            ### ⚡ Quick Install
+            ### ⚡ 1-Line Quick Install
             ```bash
             # macOS / Linux
-            curl -fsSL https://crootagent.github.io/install.sh | bash
+            curl -fsSL https://raw.githubusercontent.com/CRootAgent/crootagent/main/install.sh | bash
             
             # Windows PowerShell
-            irm https://crootagent.github.io/install.ps1 | iex
+            irm https://raw.githubusercontent.com/CRootAgent/crootagent/main/install.ps1 | iex
             ```
           files: release-assets/*
         env:

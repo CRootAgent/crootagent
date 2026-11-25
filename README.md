@@ -1,44 +1,69 @@
-# CRootAgent 🦀🤖
+# 🌴 LONTAR CLI 🦀🤖
 
-> **CRootAgent** adalah asisten pengembang cerdas (*agentic coding assistant*) berbasis CLI yang ultra-ringan, berkinerja tinggi, dan hemat sumber daya, dibangun dengan bahasa pemrograman **Rust**.
+> **LONTAR CLI** adalah asisten pengembang cerdas (*Agentic Coding & Document Intelligence Assistant*) berbasis CLI yang ultra-ringan, berkinerja tinggi, dan hemat biaya (zero-cost first), dibangun dengan bahasa pemrograman **Rust**.
 
-CRootAgent dirancang sebagai alternatif berkecepatan tinggi tanpa beban runtime (tanpa Node.js runtime overhead, tanpa Python interpreter) dengan kapabilitas setara **Claude Code**, **OpenAI Codex CLI**, **Google Antigravity CLI**, dan **AWS Kiro**.
+Lontar memadukan kapabilitas **NotebookLM** (analisis dokumen, panduan belajar, ekstraksi konteks), **OpenCode / AWS Kiro** (antarmuka terminal status box, interaksi interaktif, diff preview warna, prompt `@file`), dan **Universal Zero-Cost LLM Router** yang siap pakai dengan model-model AI gratis (Groq Llama 3.3, Google Gemini Flash, DeepSeek V3/R1, OpenRouter `:free`, GitHub Models, SambaNova, Mistral NeMo, dan Ollama lokal).
 
 ---
 
-## ✨ Fitur Utama
+## 🎨 Identitas & Filosofi Nama
 
-- **🚀 Native & Ultra-Lightweight (Rust):**
-  - Binary tunggal mandiri (*single standalone binary*) berukuran kecil.
-  - Penggunaan memori dasar hanya **~8–15 MB RAM** (dibandingkan agent berbasis Node/Python yang membutuhkan 120–250+ MB).
-  - Waktu startup kilat (< 20 ms).
+Nama **Lontar** berakar dari daun lontar (*Borassus flabellifer*), media naskah kuno Nusantara dan Bali yang digunakan selama berabad-abad untuk mencatat, melestarikan, dan menyebarkan ilmu pengetahuan, sastra, hukum, dan pengobatan tradisional.
 
-- **🌐 Multi-API & Multi-Provider Support:**
-  - **OpenAI:** GPT-4o, GPT-4o-mini, o1, o3-mini.
-  - **Anthropic Claude:** Claude 3.5 Sonnet, Claude 3.5 Haiku, Claude 3 Opus.
-  - **Google Gemini:** Gemini 1.5 Pro, Gemini 1.5 Flash.
-  - **Groq Cloud:** Llama 3.3 70B Versatile, Llama 3.1 8B Instant (latensi kilat).
-  - **Ollama (Lokal):** Llama 3.2, Qwen 2.5 Coder, DeepSeek Coder secara offline.
+Dalam era komputasi modern, **LONTAR CLI** melanjutkan tradisi tersebut sebagai instrumen digital yang membaca, menggrounding, menyintesis dokumen pengetahuan (*knowledge preservation*), dan mengeksekusi instruksi rekayasa perangkat lunak secara langsung di terminal Anda.
 
-- **🗂️ Multi-Session Management:**
-  - Simpan dan lanjutkan riwayat percakapan secara terpisah.
-  - Dukungan perpindahan provider & model dinamis di tengah sesi (`/provider`, `/model`).
-  - Ekspor seluruh sesi ke dokumen Markdown (`/export`).
+Logo Lontar dirancang secara geometris presisi menggunakan skill `/logo-design`, memadukan bilah daun lontar tradisional, inisial 'L', prompt panah CLI `>_`, dan titik jangkar pengetahuan (*grounding node*).
 
-- **🔧 Developer Tool Execution (ReAct Loop):**
-  - `read_file`: Membaca isi file dengan nomor baris dan rentang baris spesifik.
-  - `write_file`: Menulis file baru atau menimpa file dengan auto-create direktori.
-  - `edit_file`: *Surgical exact search & replace* tanpa merusak kode sekitar.
-  - `run_command`: Mengeksekusi perintah shell lokal dengan timeout dan penangkapan stdout/stderr.
-  - `list_dir`: Navigasi direktori dan penelusuran hierarki proyek.
+---
 
-- **🛡️ Human-in-the-Loop (HITL) Safety:**
-  - Mematuhi pedoman sistem agentic akademik: tindakan destruktif (eksekusi terminal atau perubahan file) meminta konfirmasi pengguna `[y/N]` secara transparan, kecuali flag `--yes` / `-y` diberikan.
-  - **Explainable AI (xAI):** Setiap respon menyertakan atribusi model nyata (`provider:model`) dan pencatatan argumen perkakas.
+## ✨ Fitur-Fitur Utama
 
-- **⚙️ Multi-OS Automated Release CI/CD:**
-  - GitHub Actions matrix build otomatis untuk Linux (x86_64), macOS (Apple Silicon arm64 & Intel x86_64), dan Windows (x86_64).
-  - Auto-tagging dan pembuatan GitHub Releases beserta checksum SHA256.
+### 1. 📚 NotebookLM-in-Terminal (Document Grounding & Synthesis)
+- **Multi-Format Ingestion:** Ekstraksi dan chunking otomatis dokumen `.md`, `.txt`, `.pdf`, serta berbagai berkas source code (`.rs`, `.py`, `.js`, `.ts`, `.json`, `.toml`).
+- **Semantic Overlap Chunking:** Memecah dokumen menjadi potongan-potongan terstruktur (800 kata dengan overlap 100 kata) disertai tag sitasi sumber `[Source: ..., Chunk: #]`.
+- **Sintesis Artefak Akademik & Proyek:**
+  - `lontar study-guide "<topik>"`: Menghasilkan dokumen panduan belajar komprehensif (`STUDY_GUIDE.md`) lengkap dengan ikhtisar, konsep kunci, glosarium, dan kuis pemahaman.
+  - `lontar prd "<ide>"`: Menyintesis dokumen kebutuhan produk (`PRD.md`) standar industri software engineering.
+  - `lontar tasklist "<prd>"`: Menyusun daftar tugas teknis berurutan (`TASKLIST.md`) dengan checklist dan kriteria verifikasi.
+- **Grounding Dinamis:** Konteks dokumen yang relevan otomatis diinjeksikan saat berdialog di sesi chat.
+
+### 2. ⚡ Universal Zero-Cost LLM Router & 429 Failover
+Lontar CLI dirancang agar siapa pun dapat langsung menggunakannya tanpa kendala biaya API:
+- **Groq Cloud:** Llama 3.3 70B Versatile (kecepatan generasi hingga ~280 tokens/detik).
+- **Google Gemini:** Gemini 1.5 Flash & Gemini 2.0 Flash (kuota gratis Google AI Studio).
+- **OpenRouter Free Tier:** Model komunitas tanpa biaya (`meta-llama/llama-3.3-70b-instruct:free`, `deepseek/deepseek-r1:free`).
+- **DeepSeek:** DeepSeek V3 dan DeepSeek R1 Reasoner.
+- **GitHub Models:** Akses gratis ke GPT-4o-mini dan Phi-3.5 via GitHub Personal Access Token (PAT).
+- **SambaNova Cloud:** Llama 3.3 70B dengan akselerator hardware RDU.
+- **Mistral AI:** Mistral NeMo dan Codestral.
+- **Ollama Local Offline:** 100% lokal tanpa koneksi internet (`http://localhost:11434/v1`).
+- **Intelligent 429 Failover:** Jika salah satu provider mengalami *Rate Limit Exceeded* (HTTP 429), Lontar secara otomatis mengalihkan permintaan ke provider gratis berikutnya dalam rantai prioritas tanpa memutus alur kerja Anda.
+
+### 3. 🖥️ Antarmuka Terminal Terinspirasi OpenCode & Kiro
+- **Status Box Berwarna:** Kotak status informatif menampilkan nama sesi aktif, model & provider yang berjalan, jumlah dokumen yang tergrounding, dan kesiapan failover.
+- **Perintah Baris Perintah (*Slash Commands*):**
+  - `/model`: Melihat dan mengganti model AI secara dinamis.
+  - `/context`: Menampilkan dokumen tergrounding dalam sesi.
+  - `/context add <file>`: Menambahkan dokumen ke memori sesi aktif.
+  - `/test`: Menjalankan suite pengujian unit dan mencatat hasilnya ke database.
+  - `/clear`: Membersihkan layar terminal.
+  - `/help`: Menampilkan ringkasan bantuan.
+  - `/exit`: Menyimpan sesi dan keluar.
+- **Sintaks `@file` Dinamis:** Cukup ketik `@nama_file` di prompt untuk menyertakan konten file secara instan.
+- **Human-in-the-Loop (HITL) Diff Preview:** Setiap perubahan berkas (`write_file`, `edit_file`) menampilkan visualisasi *unified diff* berwarna (merah untuk penghapusan, hijau untuk penambahan) dan meminta konfirmasi `[Y/n]` sebelum mengeksekusi perubahan.
+
+### 4. 🗄️ Database SQLite Lokal (CRUD Terstruktur)
+Memenuhi standar akademik Proyek 2 D4 Teknik Informatika ULBI:
+- Tabel `sessions`: Riwayat sesi, nama, model, dan total token.
+- Tabel `documents`: Berkas ter-ingest, ukuran, tipe, dan jumlah chunk.
+- Tabel `document_chunks`: Potongan teks kontekstual beserta estimasi token.
+- Tabel `providers`: Registri provider AI, endpoint URL, dan status gratis.
+- Tabel `test_logs`: Riwayat eksekusi pengujian (*test runner*) dan durasi eksekusi.
+
+### 5. 🧪 Kualitas Kode & Pengujian (Code Coverage)
+- **22 Unit & Integration Tests:** Meliputi pengujian konfigurasi, database CRUD, parser dokumen, LLM router failover, visual diff viewer, dan perkakas developer.
+- **100% Test Pass Rate:** Lulus verifikasi `cargo test`.
+- **Dukungan `cargo-tarpaulin`:** Siap untuk audit code coverage $\ge 80\%$.
 
 ---
 
@@ -46,19 +71,19 @@ CRootAgent dirancang sebagai alternatif berkecepatan tinggi tanpa beban runtime 
 
 ### 1. Menggunakan Script Otomatis (Rekomendasi)
 
-**Linux & macOS:**
+**macOS & Linux:**
 ```bash
-curl -fsSL https://crootagent.github.io/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/CRootAgent/crootagent/main/install.sh | bash
 ```
 
 **Windows (PowerShell):**
 ```powershell
-irm https://crootagent.github.io/install.ps1 | iex
+irm https://raw.githubusercontent.com/CRootAgent/crootagent/main/install.ps1 | iex
 ```
 
 ### 2. Menggunakan Cargo (Rust Toolchain)
 ```bash
-cargo install --git https://github.com/CRootAgent/crootagent.git
+cargo install --path .
 ```
 
 ### 3. Build dari Sumber (Source Code)
@@ -66,100 +91,110 @@ cargo install --git https://github.com/CRootAgent/crootagent.git
 git clone https://github.com/CRootAgent/crootagent.git
 cd crootagent
 cargo build --release
-# Binary berada di target/release/crootagent
+# Biner siap di: target/release/lontar
 ```
 
 ---
 
 ## 🚀 Panduan Pemakaian
 
-### 1. Konfigurasi API Key
+### 1. Menyetel API Key Gratis
 
-CRootAgent dapat membaca API Key dari *environment variables* atau file konfigurasi lokal `~/.config/crootagent/config.toml`:
+Lontar dapat membaca key dari *Environment Variable* atau konfigurasi lokal:
 
 ```bash
-# Melalui Environment Variables
-export GEMINI_API_KEY="AIzaSy..."
-export GROQ_API_KEY="gsk_..."
-export OPENAI_API_KEY="sk-..."
-export ANTHROPIC_API_KEY="sk-ant-..."
+# Contoh menyetel Groq Cloud (Gratis)
+lontar config set groq_api_key "gsk_..."
 
-# Atau melalui CLI config command
-crootagent config set default_provider groq
-crootagent config set groq_api_key "gsk_..."
-crootagent config set gemini_api_key "AIzaSy..."
+# Contoh menyetel Google Gemini (Gratis)
+lontar config set gemini_api_key "AIzaSy..."
+
+# Contoh menyetel OpenRouter Free
+lontar config set openrouter_api_key "sk-or-v1-..."
+
+# Menyetel provider default yang digunakan
+lontar config set default_provider groq
 ```
 
-Melihat konfigurasi aktif:
+Melihat status konfigurasi dan model:
 ```bash
-crootagent config
+lontar config show
+lontar models
 ```
 
 ### 2. Mode Interaktif (Chat REPL)
 
-Jalankan perintah tanpa argumen untuk masuk ke sesi interaktif:
+Jalankan perintah `lontar` tanpa argumen:
 ```bash
-crootagent
+lontar
 ```
 
-Perintah dalam REPL:
-- `/help` — Menampilkan panduan perintah.
-- `/provider <nama>` — Mengganti provider (`openai`, `anthropic`, `gemini`, `groq`, `ollama`).
-- `/model <nama>` — Mengganti model aktif.
-- `/session <id/nama>` — Berpindah atau membuat sesi baru.
-- `/export` — Mengekspor sesi aktif ke file Markdown.
-- `/clear` — Membersihkan riwayat percakapan sesi aktif.
-- `/exit` — Keluar dari aplikasi.
-
-### 3. Mode One-Shot (Eksekusi Cepat)
-
-Eksekusi tugas langsung dari terminal Anda:
-```bash
-# Menggunakan provider default
-crootagent "Baca Cargo.toml lalu jelaskan dependensi yang digunakan"
-
-# Tentukan provider dan model spesifik
-crootagent --provider groq --model llama-3.3-70b-versatile "Buat file hello.py yang mencetak angka genap 1-20"
-
-# Lewati konfirmasi interaktif (untuk automasi/skrip)
-crootagent -y "Jalankan cargo test dan berikan ringkasannya"
+Tampilan antarmuka:
+```text
+ ╔═════════════════════════════════════════════════════════════════════╗
+ ║   🌴 LONTAR CLI - Zero-Cost AI Agent & Document Intelligence        ║
+ ║   Kiro & OpenCode Terminal UX │ NotebookLM Grounding │ 100% Rust    ║
+ ╚═════════════════════════════════════════════════════════════════════╝
+╭─────────────────────────────────────────────────────────────────────────╮
+│ Sesi   : Sesi-Eksplorasi (62956444)                                     │
+│ Model  : llama-3.3-70b-versatile [groq]                                 │
+│ Konteks: 2 dokumen tergrounding │ Failover 8 Free AI Ready              │
+╰─────────────────────────────────────────────────────────────────────────╯
+lontar> Tolong analisa arsitektur sistem pada @README.md
 ```
 
-### 4. Manajemen Sesi
+### 3. NotebookLM Document Grounding & Sintesis
 
+**Menambahkan dokumen referensi:**
 ```bash
-# Melihat daftar seluruh sesi
-crootagent session list
+lontar context add pedoman_magang.pdf arsitektur_db.md
+lontar context list
+```
 
-# Membuat sesi baru dengan nama
-crootagent session new "Fitur-Auth"
+**Menyintesis Panduan Belajar (*Study Guide*):**
+```bash
+lontar study-guide "Prinsip Dasar Konkurensi Rust" --file panduan.md --output STUDY_GUIDE.md
+```
 
-# Menampilkan riwayat percakapan sesi
-crootagent session show <SESSION_ID>
+**Menyintesis PRD & Tasklist:**
+```bash
+lontar prd "Sistem Notifikasi Realtime dengan WebSocket" --output PRD.md
+lontar tasklist PRD.md --output TASKLIST.md
+```
 
-# Menghapus sesi
-crootagent session delete <SESSION_ID>
-
-# Ekspor sesi ke file
-crootagent session export <SESSION_ID> --output log-sesi.md
+### 4. Inspeksi Database SQLite
+```bash
+lontar db stats
+lontar db providers
+lontar db logs
 ```
 
 ---
 
-## 🧪 Pengujian & Kualitas Perangkat Lunak
+## 🧪 Menjalankan Pengujian (Unit & Integration Tests)
 
-CRootAgent dilengkapi dengan *test suite* komprehensif yang mencakup pengujian unit pada konfigurasi, manajemen sesi, dan seluruh rangkaian perkakas lokal:
-
+Untuk memverifikasi kehandalan seluruh komponen sistem:
 ```bash
 cargo test
 ```
 
-Hasil pengujian otomatis dijalankan pada setiap commit melalui pipeline CI/CD GitHub Actions.
+Untuk mengukur persentase cakupan kode (*code coverage*):
+```bash
+cargo install cargo-tarpaulin
+cargo tarpaulin --out Html --output-dir target/coverage
+```
+
+---
+
+## 🏛️ Informasi Akademik Proyek 2
+
+- **Judul Proyek:** Rancang Bangun LONTAR CLI: Multi-LLM Zero-Cost Agent dengan Grounding Dokumen NotebookLM dan Antarmuka Terminal Modular
+- **Institusi:** Program Studi D4 Teknik Informatika, Universitas Logistik dan Bisnis Internasional (ULBI)
+- **Dosen Pembimbing:** Rolly Maulana Awangga, S.T., M.T., CAIP.
+- **Pengembang:** Ahmad Zakky Nurfauzan (NPM: 714220031)
 
 ---
 
 ## 📄 Lisensi
 
-Proyek ini dilisensikan di bawah **GNU General Public License v3.0 (GPL-3.0)**.  
-Dikembangkan oleh: **Ahmad Zakky Nurfauzan** (NIM: **714250028**)  
-Program Studi Sarjana Terapan Teknik Informatika (D4TI), Universitas Logistik dan Bisnis Internasional (ULBI), Bandung.
+Proyek ini didistribusikan di bawah lisensi **GNU General Public License v3.0 (GPL-3.0)**.

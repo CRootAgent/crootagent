@@ -25,6 +25,8 @@ pub struct ChatMessage {
     pub tool_call_id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub model_attribution: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub mode: Option<String>,
     pub timestamp: DateTime<Utc>,
 }
 
@@ -36,6 +38,7 @@ impl ChatMessage {
             tool_calls: None,
             tool_call_id: None,
             model_attribution: None,
+            mode: None,
             timestamp: Utc::now(),
         }
     }
@@ -47,6 +50,7 @@ impl ChatMessage {
             tool_calls: None,
             tool_call_id: None,
             model_attribution: None,
+            mode: None,
             timestamp: Utc::now(),
         }
     }
@@ -58,6 +62,7 @@ impl ChatMessage {
             tool_calls,
             tool_call_id: None,
             model_attribution: model,
+            mode: None,
             timestamp: Utc::now(),
         }
     }
@@ -69,6 +74,7 @@ impl ChatMessage {
             tool_calls: None,
             tool_call_id: Some(tool_call_id),
             model_attribution: None,
+            mode: None,
             timestamp: Utc::now(),
         }
     }
@@ -204,7 +210,7 @@ impl SessionStore {
     pub fn export_markdown(session: &Session, output_path: Option<String>) -> Result<PathBuf> {
         let path = output_path
             .map(PathBuf::from)
-            .unwrap_or_else(|| PathBuf::from(format!("crootagent-session-{}.md", &session.id[..8])));
+            .unwrap_or_else(|| PathBuf::from(format!("lontar-session-{}.md", &session.id[..8])));
 
         let mut md = String::new();
         md.push_str(&format!("# Session: {}\n\n", session.name));

@@ -1,4 +1,4 @@
-use crootagent::tools::*;
+use lontar::tools::*;
 use serde_json::json;
 use tempfile::tempdir;
 
@@ -76,12 +76,12 @@ async fn test_list_dir() {
 async fn test_run_command() {
     let tool = RunCommandTool;
     let args = json!({
-        "command": "echo 'CRootAgent Rocks'"
+        "command": "echo 'Lontar CLI Rocks'"
     });
 
     let res = tool.execute(&args).await.expect("RunCommand failed");
     assert!(res.contains("Exit Code: 0"));
-    assert!(res.contains("CRootAgent Rocks"));
+    assert!(res.contains("Lontar CLI Rocks"));
 }
 
 #[test]

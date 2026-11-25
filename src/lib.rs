@@ -1,6 +1,11 @@
 pub mod agent;
 pub mod cli;
 pub mod config;
+pub mod db;
+pub mod diff;
+pub mod document;
 pub mod provider;
+pub mod router;
 pub mod session;
 pub mod tools;
+pub mod tui;

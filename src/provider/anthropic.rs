@@ -191,6 +191,7 @@ impl LlmProvider for AnthropicProvider {
             tool_calls: if !tool_calls.is_empty() { Some(tool_calls) } else { None },
             model_name: format!("anthropic:{}", self.model),
             finish_reason: stop_reason,
+            failover: None,
         })
     }
 }

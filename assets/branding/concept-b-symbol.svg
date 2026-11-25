@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <title>Lontar CLI Logo - Folio Stack</title>
+  <g fill="#0F172A">
+    <!-- Top Folio Sheet -->
+    <rect x="36" y="40" width="184" height="42" rx="12" />
+    <!-- Middle Folio Sheet (Shifted context layer) -->
+    <rect x="48" y="104" width="172" height="42" rx="12" />
+    <!-- Bottom Lontar Base (L-Anchor) -->
+    <rect x="36" y="168" width="128" height="42" rx="12" />
+    <!-- Terminal Prompt Node -->
+    <polygon points="184,168 220,189 184,210" />
+  </g>
+</svg>

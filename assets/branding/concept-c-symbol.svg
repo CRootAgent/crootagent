@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <title>Lontar CLI Logo - Sacred Tablet</title>
+  <g fill="#0F172A" fill-rule="evenodd">
+    <!-- Outer Rounded Tablet with True Inner Cutout Hole -->
+    <path d="M 72 36 L 184 36 C 204 36 220 52 220 72 L 220 184 C 220 204 204 220 184 220 L 72 220 C 52 220 36 204 36 184 L 36 72 C 36 52 52 36 72 36 Z
+             M 80 72 L 80 184 L 168 184 L 168 152 L 112 152 L 112 72 Z" />
+    <!-- Terminal Prompt Chevron Inset -->
+    <polygon points="132,84 164,108 132,132" />
+  </g>
+</svg>

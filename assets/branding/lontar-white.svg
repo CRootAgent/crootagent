@@ -1,0 +1,11 @@
+<svg fill="#ffffff" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"><title>Lontar CLI Logo</title>
+  
+  <g fill="#ffffff">
+    <!-- Left Leaf Spine ('L' Anchor) -->
+    <path d="M 40 44 C 40 36 46 32 54 32 L 88 32 C 96 32 102 38 102 46 L 102 164 L 140 164 C 148 164 154 170 154 178 L 154 210 C 154 218 148 224 140 224 L 54 224 C 46 224 40 218 40 210 Z" />
+    <!-- Forward Prompt Blade (Exact 45.0 and 135.0 degree chevron) -->
+    <path d="M 142 50 C 134 42 122 47 122 58 L 122 82 L 168 128 L 122 174 L 122 198 C 122 209 134 214 142 206 L 214 134 C 218 130 218 126 214 122 Z" />
+    <!-- Grounding Dot (Knowledge Seed / Cursor Pulse) -->
+    <circle cx="188" cy="196" r="14" />
+  </g>
+</svg>

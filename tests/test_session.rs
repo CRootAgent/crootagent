@@ -1,4 +1,4 @@
-use crootagent::session::{ChatMessage, Session, ToolCall};
+use lontar::session::{ChatMessage, Session, ToolCall};
 
 #[test]
 fn test_chat_message_creation() {
@@ -18,11 +18,11 @@ fn test_chat_message_creation() {
     let msg_asst = ChatMessage::assistant(
         Some("Memeriksa file...".to_string()),
         Some(vec![tool_call]),
-        Some("openai:gpt-4o".to_string()),
+        Some("groq:llama-3.3-70b-versatile".to_string()),
     );
     assert_eq!(msg_asst.role, "assistant");
     assert_eq!(msg_asst.tool_calls.as_ref().unwrap().len(), 1);
-    assert_eq!(msg_asst.model_attribution.as_deref(), Some("openai:gpt-4o"));
+    assert_eq!(msg_asst.model_attribution.as_deref(), Some("groq:llama-3.3-70b-versatile"));
 
     let msg_tool = ChatMessage::tool_response("call_1".to_string(), "File content here".to_string());
     assert_eq!(msg_tool.role, "tool");

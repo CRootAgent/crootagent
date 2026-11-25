@@ -84,6 +84,37 @@ impl LlmProvider for OpenAiProvider {
             "messages": formatted_messages,
         });
 
+        // For lontar-free zero-cost access: Try native direct Pollinations endpoint first (zero 45s IP restriction)
+        if self.name == "lontar-free" && tools.is_empty() {
+            let direct_url = "https://text.pollinations.ai/";
+            if let Ok(direct_res) = self
+                .client
+                .post(direct_url)
+                .header("Content-Type", "application/json")
+                .json(&body)
+                .send()
+                .await
+            {
+                if direct_res.status().is_success() {
+                    let direct_text = direct_res.text().await.unwrap_or_default();
+                    let trimmed_lower = direct_text.trim().to_lowercase();
+                    if !trimmed_lower.is_empty()
+                        && !trimmed_lower.contains("free limit reached")
+                        && !trimmed_lower.contains("rate limit reached")
+                        && !trimmed_lower.starts_with('<')
+                    {
+                        return Ok(ProviderResponse {
+                            content: Some(direct_text),
+                            tool_calls: None,
+                            model_name: format!("lontar-free:{}", self.model),
+                            finish_reason: Some("stop".to_string()),
+                            failover: None,
+                        });
+                    }
+                }
+            }
+        }
+
         if !tools.is_empty() {
             let tools_json: Vec<Value> = tools
                 .iter()
@@ -108,7 +139,7 @@ impl LlmProvider for OpenAiProvider {
             .header("Content-Type", "application/json")
             .json(&body);
 
-        if !self.api_key.is_empty() && self.api_key != "ollama" {
+        if !self.api_key.is_empty() && self.api_key != "ollama" && self.api_key != "anonymous" {
             req = req.header("Authorization", format!("Bearer {}", self.api_key));
         }
 
@@ -176,6 +207,7 @@ impl LlmProvider for OpenAiProvider {
             tool_calls,
             model_name: format!("{}:{}", self.name, returned_model),
             finish_reason,
+            failover: None,
         })
     }
 }

@@ -195,6 +195,7 @@ impl LlmProvider for GeminiProvider {
             tool_calls: if !tool_calls.is_empty() { Some(tool_calls) } else { None },
             model_name: format!("gemini:{}", self.model),
             finish_reason,
+            failover: None,
         })
     }
 }
